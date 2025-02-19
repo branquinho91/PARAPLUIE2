@@ -1,18 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import AppError from "../utils/AppError";
+import { Profile } from "../utils/profile";
 
-type dataJwt = JwtPayload & { userId: string };
+type dataJwt = JwtPayload & { userId: string; profile: Profile };
 
 export interface AuthRequest extends Request {
   userId: string;
+  userProfile: Profile;
 }
 
-export const verifyToken = (
-  req: Request & { userId: string },
-  _res: Response,
-  next: NextFunction,
-) => {
+export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(" ")[1] ?? "";
 
@@ -22,7 +20,8 @@ export const verifyToken = (
 
     const data = jwt.verify(token, process.env.JWT_SECRET ?? "") as dataJwt;
 
-    req.userId = data.userId;
+    (req as AuthRequest).userId = data.userId;
+    (req as AuthRequest).userProfile = data.profile;
 
     next();
   } catch (error) {
