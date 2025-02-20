@@ -98,6 +98,40 @@ class UserController {
       }
     }
   };
+
+  listUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { profile } = req.query;
+      let users;
+      if (profile) {
+        users = await this.userRepository.find({
+          where: { profile: profile as Profile },
+          order: { name: "ASC" },
+        });
+      } else {
+        users = await this.userRepository.find({
+          order: { name: "ASC" },
+        });
+      }
+
+      res
+        .status(200)
+        .json(
+          users.map((user) => ({
+            id: user.id,
+            name: user.name,
+            status: user.status,
+            profile: user.profile,
+          })),
+        );
+    } catch (error) {
+      if (error instanceof Error) {
+        next(new AppError(error.message, 500));
+      } else {
+        next(new AppError("Unknown error", 500));
+      }
+    }
+  };
 }
 
 export default UserController;
