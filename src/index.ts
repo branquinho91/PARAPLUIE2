@@ -19,7 +19,7 @@ app.use("/login", authRouter);
 
 app.use(handleError);
 
-app.get("/env", (req, res) => {
+app.get("/env", (_req, res) => {
   res.json({
     port: process.env.PORT,
     node_env: process.env.NODE_ENV,
