@@ -1,5 +1,5 @@
 import { Router } from "express";
-import checkAdmin  from "../middlewares/checkAdmin";
+import checkAdmin from "../middlewares/checkAdmin";
 import verifyToken from "../middlewares/auth";
 import UserController from "../controllers/UserController";
 
@@ -9,8 +9,10 @@ const userController = new UserController();
 // Uncomment line below to create a new ADMIN user
 // userRouter.post("/admin", userController.createAdmin);
 
-userRouter.post("/", verifyToken, checkAdmin as any, userController.createUser);
-userRouter.get("/", verifyToken, checkAdmin as any, userController.listUsers);
+userRouter.post("/", verifyToken, userController.createUser);
+userRouter.get("/", verifyToken, userController.listUsers);
 userRouter.get("/:id", verifyToken, userController.getUserById);
+userRouter.put("/:id", verifyToken, userController.updateUser);
+userRouter.patch("/:id/status", verifyToken, userController.changeUserStatus);
 
 export default userRouter;

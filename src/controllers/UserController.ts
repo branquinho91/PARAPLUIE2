@@ -14,9 +14,14 @@ class UserController {
 
   createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { userProfile } = req as any;
+      if (userProfile !== Profile.ADMIN) {
+        throw new AppError("Access Denied: Only an admin can access this route", 401);
+      }
+
       const { name, profile, email, password, document, address } = req.body;
       if (!name || !profile || !email || !password || !document) {
-        throw new AppError("Name, profile, email, password and document are required!", 400);
+        throw new AppError("Name, profile, email, password, and document are required!", 400);
       }
 
       const existingUser = await this.userRepository.findOneBy({ email });
@@ -101,6 +106,11 @@ class UserController {
 
   listUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { userProfile } = req as any;
+      if (userProfile !== Profile.ADMIN) {
+        throw new AppError("Access Denied: Only an admin can access this route", 401);
+      }
+
       const { profile } = req.query;
       let users;
       if (profile) {
@@ -133,8 +143,8 @@ class UserController {
 
   getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
       const { userProfile, userId } = req as any;
+      const { id } = req.params;
 
       if (
         userProfile !== Profile.ADMIN &&
@@ -165,6 +175,103 @@ class UserController {
       } else {
         next(new AppError("Unknown error", 404));
       }
+    }
+  };
+
+  updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { name, email, password, fullAddress } = req.body;
+      const { userProfile, userId } = req as any;
+
+      if (
+        userProfile !== Profile.ADMIN &&
+        (userProfile !== Profile.DRIVER || userId !== Number(id))
+      ) {
+        throw new AppError(
+          "Access Denied: Only the logged-in driver or an admin can access this route",
+          401,
+        );
+      }
+
+      const user = await this.userRepository.findOneBy({ id: Number(id) });
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      user.name = name || user.name;
+      user.email = email || user.email;
+      if (password) {
+        user.passwordHash = await bcrypt.hash(password, 10);
+      }
+
+      await this.userRepository.save(user);
+
+      if (fullAddress) {
+        if (user.profile === Profile.BRANCH) {
+          await this.updateBranchAddress(user, fullAddress);
+        } else if (user.profile === Profile.DRIVER) {
+          await this.updateDriverAddress(user, fullAddress);
+        }
+      }
+
+      res.status(200).json({
+        message: "User updated successfully",
+      });
+    } catch (error) {
+      if (error instanceof AppError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new AppError(error.message, 404));
+      } else {
+        next(new AppError("Unknown error", 404));
+      }
+    }
+  };
+
+  changeUserStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userProfile } = req as any;
+      if (userProfile !== Profile.ADMIN) {
+        throw new AppError("Access Denied: Only an admin can access this route", 401);
+      }
+
+      const { id } = req.params;
+      const user = await this.userRepository.findOneBy({ id: Number(id) });
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      user.status = !user.status;
+      await this.userRepository.save(user);
+
+      res.status(200).json({
+        message: "User status updated successfully",
+      });
+    } catch (error) {
+      if (error instanceof AppError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new AppError(error.message, 404));
+      } else {
+        next(new AppError("Unknown error", 404));
+      }
+    }
+  };
+
+  private updateBranchAddress = async (user: User, fullAddress: string) => {
+    const branch = await this.branchRepository.findOneBy({ user });
+    if (branch) {
+      branch.fullAddress = fullAddress;
+      await this.branchRepository.save(branch);
+    }
+  };
+
+  private updateDriverAddress = async (user: User, fullAddress: string) => {
+    const driver = await this.driverRepository.findOneBy({ user });
+    if (driver) {
+      driver.fullAddress = fullAddress;
+      await this.driverRepository.save(driver);
     }
   };
 }
