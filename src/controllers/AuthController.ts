@@ -33,7 +33,7 @@ class AuthController {
 
       const jwtSecret = process.env.JWT_SECRET ?? "";
 
-      const token = jwt.sign(jwtPayload, jwtSecret, { expiresIn: "400h" });
+      const token = jwt.sign(jwtPayload, jwtSecret); // Adjust token timer as third parameter if needed so
 
       res.status(200).json({ token, name: user.name, profile: user.profile });
     } catch (error) {
