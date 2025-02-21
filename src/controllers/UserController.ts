@@ -114,21 +114,56 @@ class UserController {
         });
       }
 
-      res
-        .status(200)
-        .json(
-          users.map((user) => ({
-            id: user.id,
-            name: user.name,
-            status: user.status,
-            profile: user.profile,
-          })),
-        );
+      res.status(200).json(
+        users.map((user) => ({
+          id: user.id,
+          name: user.name,
+          status: user.status,
+          profile: user.profile,
+        })),
+      );
     } catch (error) {
       if (error instanceof Error) {
         next(new AppError(error.message, 500));
       } else {
         next(new AppError("Unknown error", 500));
+      }
+    }
+  };
+
+  getUserById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { userProfile, userId } = req as any;
+
+      if (
+        userProfile !== Profile.ADMIN &&
+        (userProfile !== Profile.DRIVER || userId !== Number(id))
+      ) {
+        throw new AppError(
+          "Access Denied: Only the logged-in driver or an admin can access this route",
+          401,
+        );
+      }
+
+      const user = await this.userRepository.findOneBy({ id: Number(id) });
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      res.status(200).json({
+        id: user.id,
+        name: user.name,
+        status: user.status,
+        profile: user.profile,
+      });
+    } catch (error) {
+      if (error instanceof AppError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new AppError(error.message, 404));
+      } else {
+        next(new AppError("Unknown error", 404));
       }
     }
   };
