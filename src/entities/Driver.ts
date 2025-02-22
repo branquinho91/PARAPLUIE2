@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from "typeorm";
 import { User } from "./User";
 
@@ -20,7 +21,7 @@ export class Driver {
   @Column({ type: "varchar", length: 30, unique: true })
   document: string;
 
-  @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
+  @OneToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
   user: User;
 
