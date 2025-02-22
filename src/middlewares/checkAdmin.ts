@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { AuthRequest } from "./auth";
 import AppError from "../utils/AppError";
-import { Profile } from "../utils/profile";
+import { Profile } from "../utils/profileEnum";
 
 const checkAdmin = (req: AuthRequest, _res: Response, next: NextFunction) => {
   if (req.userProfile !== Profile.ADMIN) {

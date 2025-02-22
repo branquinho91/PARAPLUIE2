@@ -1,11 +1,10 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
-import { Profile } from "../utils/profileEnum";
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 
-export class CreateTableUsers1739910156343 implements MigrationInterface {
+export class CreateTableProducts1740239987582 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: "users",
+        name: "products",
         columns: [
           {
             name: "id",
@@ -21,29 +20,25 @@ export class CreateTableUsers1739910156343 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: "profile",
-            type: "enum",
-            enum: Object.values(Profile),
-            enumName: "profile_enum",
+            name: "amount",
+            type: "int",
             isNullable: false,
           },
           {
-            name: "email",
+            name: "description",
             type: "varchar",
-            length: "150",
+            length: "200",
             isNullable: false,
-            isUnique: true,
           },
           {
-            name: "password_hash",
+            name: "url_cover",
             type: "varchar",
-            length: "255",
-            isNullable: false,
+            length: "200",
+            isNullable: true,
           },
           {
-            name: "status",
-            type: "boolean",
-            default: true,
+            name: "branch_id",
+            type: "int",
             isNullable: false,
           },
           {
@@ -63,9 +58,27 @@ export class CreateTableUsers1739910156343 implements MigrationInterface {
       }),
       true,
     );
+
+    await queryRunner.createForeignKey(
+      "products",
+      new TableForeignKey({
+        columnNames: ["branch_id"],
+        referencedColumnNames: ["id"],
+        referencedTableName: "branches",
+        onDelete: "CASCADE",
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable("users");
+    const table = await queryRunner.getTable("products");
+    if (table) {
+      const foreignKey = table.foreignKeys.find((fk) => fk.columnNames.includes("branch_id"));
+      if (foreignKey) {
+        await queryRunner.dropForeignKey("products", foreignKey);
+      }
+    }
+
+    await queryRunner.dropTable("products");
   }
 }

@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Profile } from "../utils/profile";
+import { Profile } from "../utils/profileEnum";
 
 @Entity("users")
 export class User {
