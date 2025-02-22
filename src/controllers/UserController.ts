@@ -12,12 +12,31 @@ class UserController {
   private branchRepository = AppDataSource.getRepository(Branch);
   private driverRepository = AppDataSource.getRepository(Driver);
 
+  private checkAdminAccess(req: Request) {
+    const { userProfile } = req as any;
+    if (userProfile !== Profile.ADMIN) {
+      throw new AppError("Access Denied: Only an admin can access this route", 401);
+    }
+  }
+
+  private checkAdminOrDriverAccess(req: Request) {
+    const { userProfile, userId } = req as any;
+    const { id } = req.params;
+
+    if (
+      userProfile !== Profile.ADMIN &&
+      (userProfile !== Profile.DRIVER || userId !== Number(id))
+    ) {
+      throw new AppError(
+        "Access Denied: Only the logged-in driver or an admin can access this route",
+        401,
+      );
+    }
+  }
+
   createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userProfile } = req as any;
-      if (userProfile !== Profile.ADMIN) {
-        throw new AppError("Access Denied: Only an admin can access this route", 401);
-      }
+      this.checkAdminAccess(req);
 
       const { name, profile, email, password, document, address } = req.body;
       if (!name || !profile || !email || !password || !document) {
@@ -106,10 +125,7 @@ class UserController {
 
   listUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userProfile } = req as any;
-      if (userProfile !== Profile.ADMIN) {
-        throw new AppError("Access Denied: Only an admin can access this route", 401);
-      }
+      this.checkAdminAccess(req);
 
       const { profile } = req.query;
       let users;
@@ -143,19 +159,9 @@ class UserController {
 
   getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userProfile, userId } = req as any;
+      this.checkAdminOrDriverAccess(req);
+
       const { id } = req.params;
-
-      if (
-        userProfile !== Profile.ADMIN &&
-        (userProfile !== Profile.DRIVER || userId !== Number(id))
-      ) {
-        throw new AppError(
-          "Access Denied: Only the logged-in driver or an admin can access this route",
-          401,
-        );
-      }
-
       const user = await this.userRepository.findOneBy({ id: Number(id) });
       if (!user) {
         throw new AppError("User not found", 404);
@@ -180,19 +186,10 @@ class UserController {
 
   updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      this.checkAdminOrDriverAccess(req);
+
       const { id } = req.params;
       const { name, email, password, fullAddress } = req.body;
-      const { userProfile, userId } = req as any;
-
-      if (
-        userProfile !== Profile.ADMIN &&
-        (userProfile !== Profile.DRIVER || userId !== Number(id))
-      ) {
-        throw new AppError(
-          "Access Denied: Only the logged-in driver or an admin can access this route",
-          401,
-        );
-      }
 
       const user = await this.userRepository.findOneBy({ id: Number(id) });
       if (!user) {
@@ -231,10 +228,7 @@ class UserController {
 
   changeUserStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userProfile } = req as any;
-      if (userProfile !== Profile.ADMIN) {
-        throw new AppError("Access Denied: Only an admin can access this route", 401);
-      }
+      this.checkAdminAccess(req);
 
       const { id } = req.params;
       const user = await this.userRepository.findOneBy({ id: Number(id) });
