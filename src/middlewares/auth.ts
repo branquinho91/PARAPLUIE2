@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import AppError from "../utils/AppError";
-import { Profile } from "../utils/profile";
+import { Profile } from "../utils/profileEnum";
 
 type dataJwt = JwtPayload & { userId: string; profile: Profile };
 

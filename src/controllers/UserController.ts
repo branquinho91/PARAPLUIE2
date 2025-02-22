@@ -3,7 +3,7 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
 import { Branch } from "../entities/Branch";
 import { Driver } from "../entities/Driver";
-import { Profile } from "../utils/profile";
+import { Profile } from "../utils/profileEnum";
 import AppError from "../utils/AppError";
 import bcrypt from "bcrypt";
 
