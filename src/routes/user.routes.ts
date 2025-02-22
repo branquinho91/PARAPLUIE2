@@ -1,5 +1,4 @@
 import { Router } from "express";
-import checkAdmin from "../middlewares/checkAdmin";
 import verifyToken from "../middlewares/auth";
 import UserController from "../controllers/UserController";
 
