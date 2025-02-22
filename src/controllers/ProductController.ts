@@ -59,6 +59,29 @@ class ProductController {
       }
     }
   };
+
+  listProducts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      this.checkBranchAccess(req);
+
+      const { userId } = req as any;
+      const branch = await this.findBranchByUserId(Number(userId));
+
+      const products = await this.productRepository.find({
+        where: { branch: { id: branch.id } },
+      });
+
+      return res.status(200).json(products);
+    } catch (error) {
+      if (error instanceof AppError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new AppError(error.message, 400));
+      } else {
+        next(new AppError("Unknown error", 400));
+      }
+    }
+  };
 }
 
 export default ProductController;
