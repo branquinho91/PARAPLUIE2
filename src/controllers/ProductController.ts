@@ -48,7 +48,7 @@ class ProductController {
         }),
       );
 
-      return res.status(201).json(product);
+      res.status(201).json(product);
     } catch (error) {
       if (error instanceof AppError) {
         next(error);
@@ -71,7 +71,7 @@ class ProductController {
         where: { branch: { id: branch.id } },
       });
 
-      return res.status(200).json(products);
+      res.status(200).json(products);
     } catch (error) {
       if (error instanceof AppError) {
         next(error);
