@@ -12,14 +12,14 @@ class UserController {
   private branchRepository = AppDataSource.getRepository(Branch);
   private driverRepository = AppDataSource.getRepository(Driver);
 
-  private checkAdminAccess(req: Request) {
+  private checkAdminAccess = (req: Request) => {
     const { userProfile } = req as any;
     if (userProfile !== Profile.ADMIN) {
       throw new AppError("Access Denied: Only an admin can access this route", 401);
     }
-  }
+  };
 
-  private checkAdminOrDriverAccess(req: Request) {
+  private checkAdminOrDriverAccess = (req: Request) => {
     const { userProfile, userId } = req as any;
     const { id } = req.params;
 
@@ -32,7 +32,7 @@ class UserController {
         401,
       );
     }
-  }
+  };
 
   createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {

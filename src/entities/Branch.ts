@@ -4,10 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
+  OneToMany,
+  OneToOne,
   JoinColumn,
 } from "typeorm";
 import { User } from "./User";
+import { Product } from "./Product";
 
 @Entity("branches")
 export class Branch {
@@ -20,9 +22,12 @@ export class Branch {
   @Column({ type: "varchar", length: 30, unique: true })
   document: string;
 
-  @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
+  @OneToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
   user: User;
+
+  @OneToMany(() => Product, (product) => product.branch)
+  products: Product[];
 
   @CreateDateColumn({ name: "created_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
