@@ -9,6 +9,7 @@ import logger from "./config/winston";
 import authRouter from "./routes/auth.routes";
 import userRouter from "./routes/user.routes";
 import productRouter from "./routes/product.routes";
+import movementRouter from "./routes/movement.routes";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/login", authRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
+app.use("/movements", movementRouter);
 
 app.use(handleError);
 

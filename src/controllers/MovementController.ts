@@ -1,0 +1,87 @@
+import { NextFunction, Request, Response } from "express";
+import { AppDataSource } from "../data-source";
+import { Branch } from "../entities/Branch";
+import { Product } from "../entities/Product";
+import { Movement } from "../entities/Movement";
+import { Profile } from "../utils/profileEnum";
+import AppError from "../utils/AppError";
+
+class MovementController {
+  private branchRepository = AppDataSource.getRepository(Branch);
+  private productRepository = AppDataSource.getRepository(Product);
+  private movementRepository = AppDataSource.getRepository(Movement);
+
+  private checkBranchAccess = (req: Request): void => {
+    const { userProfile } = req as any;
+    if (userProfile !== Profile.BRANCH) {
+      throw new AppError("Access Denied: Only a branch can access this route", 401);
+    }
+  };
+
+  private findBranchByUserId = async (userId: number): Promise<Branch> => {
+    const branch = await this.branchRepository.findOne({
+      where: { user: { id: userId } },
+    });
+    if (!branch) {
+      throw new AppError("Branch not found!", 404);
+    }
+    return branch;
+  };
+
+  createMovement = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      this.checkBranchAccess(req);
+
+      const { userId } = req as any;
+      const branch = await this.findBranchByUserId(Number(userId));
+
+      const { destinationBranchId, productId, quantity } = req.body;
+      if (!destinationBranchId || !productId || !quantity) {
+        throw new AppError("Destination Branch ID, Product ID and quantity are required!", 400);
+      }
+
+      const destinationBranch = await this.branchRepository.findOne({
+        where: { id: Number(destinationBranchId) },
+      });
+      if (!destinationBranch) {
+        throw new AppError("Destination Branch not found!", 404);
+      }
+      if (destinationBranch.id === branch.id) {
+        throw new AppError("Destination Branch cannot be the same as the source Branch!", 400);
+      }
+
+      const product = await this.productRepository.findOne({
+        where: { id: Number(productId), branch: { id: branch.id } },
+      });
+      if (!product) {
+        throw new AppError("Product not found!", 404);
+      }
+      if (product.amount < quantity || quantity <= 0) {
+        throw new AppError("Invalid quantity!", 400);
+      }
+
+      product.amount -= quantity;
+      await this.productRepository.save(product);
+
+      const movement = this.movementRepository.create({
+        destinationBranch,
+        product,
+        quantity,
+      });
+
+      await this.movementRepository.save(movement);
+
+      res.status(201).json(movement);
+    } catch (error) {
+      if (error instanceof AppError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new AppError(error.message, 400));
+      } else {
+        next(new AppError("Unknown error", 400));
+      }
+    }
+  };
+}
+
+export default MovementController;
