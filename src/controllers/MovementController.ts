@@ -18,6 +18,20 @@ class MovementController {
     }
   };
 
+  private checkBranchOrDriverAccess = (req: Request): void => {
+    const { userProfile } = req as any;
+    if (userProfile !== Profile.BRANCH && userProfile !== Profile.DRIVER) {
+      throw new AppError("Access Denied: Only a branch or driver can access this route", 401);
+    }
+  };
+
+  private checkDriverAccess = (req: Request): void => {
+    const { userProfile } = req as any;
+    if (userProfile !== Profile.DRIVER) {
+      throw new AppError("Access Denied: Only a driver can access this route", 401);
+    }
+  };
+
   private findBranchByUserId = async (userId: number): Promise<Branch> => {
     const branch = await this.branchRepository.findOne({
       where: { user: { id: userId } },
@@ -82,6 +96,28 @@ class MovementController {
       }
     }
   };
+
+  listMovements = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      this.checkBranchOrDriverAccess(req);
+
+      const movements = await this.movementRepository.find({
+        relations: ["product", "destinationBranch"],
+      });
+
+      res.status(200).json(movements);
+    } catch (error) {
+      if (error instanceof AppError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new AppError(error.message, 400));
+      } else {
+        next(new AppError("Unknown error", 400));
+      }
+    }
+  };
+
+  
 }
 
 export default MovementController;
