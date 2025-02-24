@@ -86,7 +86,6 @@ class MovementController {
       if (product.amount < quantity || quantity <= 0) {
         throw new AppError("Invalid quantity!", 400);
       }
-
       product.amount -= quantity;
       await this.productRepository.save(product);
 
@@ -95,7 +94,6 @@ class MovementController {
         product,
         quantity,
       });
-
       await this.movementRepository.save(movement);
 
       res.status(201).json(movement);
@@ -135,8 +133,7 @@ class MovementController {
       this.checkDriverAccess(req);
 
       const { userId } = req as any;
-      // DESCOMENTAR QUANDO TIVER FEITO O RELACIONAMENTO CORRETAMENTE
-      // const driver = await this.findDriverByUserId(Number(userId));
+      const driver = await this.findDriverByUserId(Number(userId));
 
       const { id: movementId } = req.params;
       if (!movementId) {
@@ -155,8 +152,7 @@ class MovementController {
         throw new AppError("Movement is not pending!", 400);
       }
 
-      // VINCULAR A MOVIMENTACAO A UM DRIVER
-
+      movement.driver = driver;
       movement.status = MovementStatus.IN_PROGRESS;
       await this.movementRepository.save(movement);
 
@@ -172,8 +168,66 @@ class MovementController {
     }
   };
 
-  // IMPLEMENTAR QUANDO POSSÍVEL
-  finishMovement = () => {};
+  finishMovement = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      this.checkDriverAccess(req);
+
+      const { userId } = req as any;
+      const driver = await this.findDriverByUserId(Number(userId));
+
+      const { id: movementId } = req.params;
+      if (!movementId) {
+        throw new AppError("Movement ID is required!", 400);
+      }
+
+      const movement = await this.movementRepository.findOne({
+        where: {
+          id: Number(movementId),
+        },
+        relations: ["product", "destinationBranch"],
+      });
+      if (!movement) {
+        throw new AppError("Movement not found!", 404);
+      }
+      if (movement.status !== MovementStatus.IN_PROGRESS) {
+        throw new AppError("Movement is not in progress!", 400);
+      }
+      if (movement.driver.id !== driver.id) {
+        throw new AppError("Driver is not assigned to this movement!", 400);
+      }
+
+      movement.status = MovementStatus.FINISHED;
+      await this.movementRepository.save(movement);
+
+      const destinationProduct = await this.productRepository.findOne({
+        where: { id: movement.product.id, branch: { id: movement.destinationBranch.id } },
+      });
+
+      if (destinationProduct) {
+        destinationProduct.amount += movement.quantity;
+        await this.productRepository.save(destinationProduct);
+      } else {
+        const newProduct = this.productRepository.create({
+          name: movement.product.name,
+          amount: movement.quantity,
+          description: movement.product.description,
+          urlCover: movement.product.urlCover,
+          branch: movement.destinationBranch,
+        });
+        await this.productRepository.save(newProduct);
+      }
+
+      res.status(200).json(movement);
+    } catch (error) {
+      if (error instanceof AppError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new AppError(error.message, 400));
+      } else {
+        next(new AppError("Unknown error", 400));
+      }
+    }
+  };
 }
 
 export default MovementController;
