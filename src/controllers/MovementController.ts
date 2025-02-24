@@ -184,7 +184,7 @@ class MovementController {
         where: {
           id: Number(movementId),
         },
-        relations: ["product", "destinationBranch"],
+        relations: ["product", "destinationBranch", "driver"],
       });
       if (!movement) {
         throw new AppError("Movement not found!", 404);
