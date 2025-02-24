@@ -10,6 +10,7 @@ import {
 import { Branch } from "./Branch";
 import { Product } from "./Product";
 import { MovementStatus } from "../utils/movementStatusEnum";
+import { Driver } from "./Driver";
 
 @Entity("movements")
 export class Movement {
@@ -23,6 +24,10 @@ export class Movement {
   @ManyToOne(() => Product, { onDelete: "CASCADE" })
   @JoinColumn({ name: "product_id" })
   product: Product;
+
+  @ManyToOne(() => Driver, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "driver_id" })
+  driver: Driver;
 
   @Column({ type: "int" })
   quantity: number;
