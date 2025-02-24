@@ -1,15 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Branch } from "../entities/Branch";
+import { Driver } from "../entities/Driver";
 import { Product } from "../entities/Product";
 import { Movement } from "../entities/Movement";
 import { Profile } from "../utils/profileEnum";
+import { MovementStatus } from "../utils/movementStatusEnum";
 import AppError from "../utils/AppError";
 
 class MovementController {
   private branchRepository = AppDataSource.getRepository(Branch);
   private productRepository = AppDataSource.getRepository(Product);
   private movementRepository = AppDataSource.getRepository(Movement);
+  private driverRepository = AppDataSource.getRepository(Driver);
 
   private checkBranchAccess = (req: Request): void => {
     const { userProfile } = req as any;
@@ -40,6 +43,16 @@ class MovementController {
       throw new AppError("Branch not found!", 404);
     }
     return branch;
+  };
+
+  private findDriverByUserId = async (userId: number): Promise<Driver> => {
+    const driver = await this.driverRepository.findOne({
+      where: { user: { id: userId } },
+    });
+    if (!driver) {
+      throw new AppError("Driver not found!", 404);
+    }
+    return driver;
   };
 
   createMovement = async (req: Request, res: Response, next: NextFunction) => {
@@ -117,7 +130,50 @@ class MovementController {
     }
   };
 
-  
+  startMovement = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      this.checkDriverAccess(req);
+
+      const { userId } = req as any;
+      // DESCOMENTAR QUANDO TIVER FEITO O RELACIONAMENTO CORRETAMENTE
+      // const driver = await this.findDriverByUserId(Number(userId));
+
+      const { id: movementId } = req.params;
+      if (!movementId) {
+        throw new AppError("Movement ID is required!", 400);
+      }
+
+      const movement = await this.movementRepository.findOne({
+        where: {
+          id: Number(movementId),
+        },
+      });
+      if (!movement) {
+        throw new AppError("Movement not found!", 404);
+      }
+      if (movement.status !== MovementStatus.PENDING) {
+        throw new AppError("Movement is not pending!", 400);
+      }
+
+      // VINCULAR A MOVIMENTACAO A UM DRIVER
+
+      movement.status = MovementStatus.IN_PROGRESS;
+      await this.movementRepository.save(movement);
+
+      res.status(200).json(movement);
+    } catch (error) {
+      if (error instanceof AppError) {
+        next(error);
+      } else if (error instanceof Error) {
+        next(new AppError(error.message, 400));
+      } else {
+        next(new AppError("Unknown error", 400));
+      }
+    }
+  };
+
+  // IMPLEMENTAR QUANDO POSSÍVEL
+  finishMovement = () => {};
 }
 
 export default MovementController;
