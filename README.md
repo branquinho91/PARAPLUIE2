@@ -89,42 +89,42 @@ PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre f
 
 PARAPLUIE2/
 ├── src/
-│ ├── config/
-│ │ └── winston.ts
-│ ├── controllers/
-│ │ ├── AuthController.ts
-│ │ ├── MovementController.ts
-│ │ ├── ProductController.ts
-│ │ └── UserController.ts
-│ ├── data-source.ts
-│ ├── entities/
-│ │ ├── Branch.ts
-│ │ ├── Driver.ts
-│ │ ├── Movement.ts
-│ │ ├── Product.ts
-│ │ └── User.ts
-│ ├── index.ts
-│ ├── middlewares/
-│ │ ├── auth.ts
-│ │ └── handleError.ts
-│ ├── migrations/
-│ │ ├── 1739910156343-CreateTableUsers.ts
-│ │ ├── 1739910219836-CreateTableBranches.ts
-│ │ ├── 1739910232693-CreateTableDrivers.ts
-│ │ ├── 1740239987582-CreateTableProducts.ts
-│ │ ├── 1740240041853-CreateTableMovements.ts
-│ │ └── 1740437240166-CreateColumnTableMovements.ts
-│ ├── routes/
-│ │ ├── auth.routes.ts
-│ │ ├── movement.routes.ts
-│ │ ├── product.routes.ts
-│ │ └── user.routes.ts
-│ ├── utils/
-│ │ ├── AppError.ts
-│ │ ├── movementStatusEnum.ts
-│ │ ├── profileEnum.ts
-│ │ └── validateEmail.ts
-│ └── README.md
+│   ├── config/
+│   │   └── winston.ts
+│   ├── controllers/
+│   │   ├── AuthController.ts
+│   │   ├── MovementController.ts
+│   │   ├── ProductController.ts
+│   │   └── UserController.ts
+│   ├── data-source.ts
+│   ├── entities/
+│   │   ├── Branch.ts
+│   │   ├── Driver.ts
+│   │   ├── Movement.ts
+│   │   ├── Product.ts
+│   │   └── User.ts
+│   ├── index.ts
+│   ├── middlewares/
+│   │   ├── auth.ts
+│   │   └── handleError.ts
+│   ├── migrations/
+│   │   ├── 1739910156343-CreateTableUsers.ts
+│   │   ├── 1739910219836-CreateTableBranches.ts
+│   │   ├── 1739910232693-CreateTableDrivers.ts
+│   │   ├── 1740239987582-CreateTableProducts.ts
+│   │   ├── 1740240041853-CreateTableMovements.ts
+│   │   └── 1740437240166-CreateColumnTableMovements.ts
+│   ├── routes/
+│   │   ├── auth.routes.ts
+│   │   ├── movement.routes.ts
+│   │   ├── product.routes.ts
+│   │   └── user.routes.ts
+│   ├── utils/
+│   │   ├── AppError.ts
+│   │   ├── movementStatusEnum.ts
+│   │   ├── profileEnum.ts
+│   │   └── validateEmail.ts
+│   └── README.md
 ├── .env
 ├── .env-example
 ├── .gitignore
@@ -153,7 +153,3 @@ Este projeto está licenciado sob a Licença MIT. Veja o arquivo LICENSE para ma
 - Email pessoal: [gustavobranquinho2@gmail.com]
 - Email acadêmico: [gustavo_branquinho@estudante.sesisenai.org.br]
 - LinkedIn: [Gustavo Branquinho](https://www.linkedin.com/in/gustavobranquinho2)
-
-```
-
-```
