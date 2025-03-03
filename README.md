@@ -43,10 +43,12 @@ PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre f
 
    ```bash
    git clone https://github.com/seu-usuario/PARAPLUIE2.git
+   ```
+   ```
    cd PARAPLUIE2
    ```
 
-2. ```bash
+1. ```bash
    npm install
    ```
 
@@ -83,10 +85,14 @@ PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre f
    npm run start
    ```
 
-3. O servidor estará rodando em http://localhost:3333.
+3.
+```plaintext
+O servidor estará rodando em http://localhost:3333.
+```
 
 ## Estrutura do Projeto
 
+```plaintext
 PARAPLUIE2/
 ├── src/
 │   ├── config/
@@ -132,6 +138,7 @@ PARAPLUIE2/
 ├── package.json
 ├── tsconfig.json
 └── README.md
+```
 
 ## Tecnologias Utilizadas
 
@@ -150,6 +157,6 @@ Este projeto está licenciado sob a Licença MIT. Veja o arquivo LICENSE para ma
 ## Contato
 
 - Nome: Gustavo Branquinho
-- Email pessoal: [gustavobranquinho2@gmail.com]
-- Email acadêmico: [gustavo_branquinho@estudante.sesisenai.org.br]
+- Email pessoal: gustavobranquinho2@gmail.com
+- Email acadêmico: gustavo_branquinho@estudante.sesisenai.org.br
 - LinkedIn: [Gustavo Branquinho](https://www.linkedin.com/in/gustavobranquinho2)
