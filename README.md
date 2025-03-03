@@ -40,15 +40,15 @@ PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre f
 ## Instalação
 
 1. Clone o repositório:
-
    ```bash
    git clone https://github.com/seu-usuario/PARAPLUIE2.git
    ```
-   ```
+2. Abra a pasta:
+   ```bash
    cd PARAPLUIE2
    ```
-
-1. ```bash
+3. Instale as dependências:
+   ```bash
    npm install
    ```
 
@@ -85,10 +85,9 @@ PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre f
    npm run start
    ```
 
-3.
-```plaintext
-O servidor estará rodando em http://localhost:3333.
-```
+3. ```plaintext
+   O servidor estará rodando em http://localhost:3333.
+   ```
 
 ## Estrutura do Projeto
 
