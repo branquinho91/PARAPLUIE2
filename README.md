@@ -1,10 +1,6 @@
 # PARAPLUIE2
 
-PARAPLUIE2 é uma API desenvolvida com TypeORM e Express.js para gerenciar movimentações de produtos entre filiais de uma rede de farmácias. O sistema oferece autenticação de usuários, controle de acesso baseado em perfis e operações CRUD para usuários, produtos e movimentações.
-
-Este projeto foi desenvolvido como parte do trabalho de conclusão do Módulo 2 do programa Desenvolvedor FullStack Mobile do curso DEVinHouse SENAI Clamed V3.
-
-A API serve como backend para o aplicativo PARAPLUIE Farmácias, fornecendo a infraestrutura necessária para a gestão eficiente de estoque e transferências entre unidades.
+> PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre filiais. Ele permite que administradores, filiais e motoristas gerenciem usuários, produtos e movimentações de forma eficiente e segura.
 
 ## Índice
 
@@ -21,7 +17,11 @@ A API serve como backend para o aplicativo PARAPLUIE Farmácias, fornecendo a in
 
 ## Descrição
 
-PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre filiais. Ele permite que administradores, filiais e motoristas gerenciem usuários, produtos e movimentações de forma eficiente e segura.
+PARAPLUIE2 é uma API desenvolvida com TypeORM e Express.js para gerenciar movimentações de produtos entre filiais de uma rede de farmácias. O sistema oferece autenticação de usuários, controle de acesso baseado em perfis e operações CRUD para usuários, produtos e movimentações.
+
+Este projeto foi desenvolvido como parte do trabalho de conclusão do Módulo 2 do programa Desenvolvedor FullStack Mobile do curso DEVinHouse SENAI Clamed V3.
+
+A API serve como backend para o aplicativo PARAPLUIE Farmácias, fornecendo a infraestrutura necessária para a gestão eficiente de estoque e transferências entre unidades.
 
 ## Funcionalidades
 
@@ -85,9 +85,7 @@ PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre f
    npm run start
    ```
 
-3. ```plaintext
-   O servidor estará rodando em http://localhost:3333.
-   ```
+3.  O servidor estará rodando em http://localhost:3333.
 
 ## Estrutura do Projeto
 
