@@ -2,8 +2,6 @@
 
 > PARAPLUIE2 é um sistema de gerenciamento de movimentações de produtos entre filiais. Ele permite que administradores, filiais e motoristas gerenciem usuários, produtos e movimentações de forma eficiente e segura.
 
-> Vídeo explicativo do projeto: [PARAPLUIE2 API](https://youtu.be/2RD_AvvwkFk)
-
 ## Índice
 
 - [Descrição](#descrição)
